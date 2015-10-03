@@ -155,15 +155,19 @@ def one_player_game(board, user_sym)
 end
 
 def player_turn(board,user_name,user_sym)
-  puts "#{user_name}, where do you want to place a mark? (type 'h' for instructions)"
-  input = get_user_input
-  empty_spaces = get_empty_spaces(board)
-  if input == "h"
-    instructions
-  elsif empty_spaces.include?(input.to_sym)
-    board[input.to_sym] = user_sym
-  else 
-    puts "invalid input, try again"
+  action = ""
+  until action == "exit" 
+    puts "#{user_name}, where do you want to place a mark? (type 'h' for instructions)"
+    input = get_user_input
+    empty_spaces = get_empty_spaces(board)
+    if input == "h"
+      instructions
+    elsif empty_spaces.include?(input.to_sym)
+      board[input.to_sym] = user_sym
+      action = "exit"
+    else 
+      puts "invalid input, try again"
+    end
   end
 end
 
