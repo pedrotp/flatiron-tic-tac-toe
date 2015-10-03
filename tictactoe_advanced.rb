@@ -27,10 +27,34 @@ def get_user_input
 end
 
 def choose_user_symbol
-  puts "What symbol do you want to use? Please type 'x' or 'o'"
-  user_symbol = get_user_input
-  puts "Great! Let's get started"
-  puts ""
+  action = ""
+  until action == "exit"
+    puts "What symbol do you want to use? Please type 'x' or 'o'"
+    user_symbol = get_user_input
+    if user_symbol == "x" || user_symbol == "o"
+      puts "Great! Let's get started"
+      puts ""
+      action = "exit"
+    else
+      puts "invalid input, try again"
+    end
+  end
+  user_symbol
+end
+
+def choose_user_symbol
+  action = ""
+  until action == "exit"
+    puts "What symbol do you want to use? Please type 'x' or 'o'"
+    user_symbol = get_user_input
+    if user_symbol == "x" || user_symbol == "o"
+      puts "Great! Let's get started"
+      puts ""
+      action = "exit"
+    else
+      puts "invalid input, try again"
+    end
+  end
   user_symbol
 end
 
