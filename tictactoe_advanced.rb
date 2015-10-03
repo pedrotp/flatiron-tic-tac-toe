@@ -42,33 +42,55 @@ def choose_user_symbol
   user_symbol
 end
 
-def choose_user_symbol
+def choose_num_players
   action = ""
   until action == "exit"
-    puts "What symbol do you want to use? Please type 'x' or 'o'"
-    user_symbol = get_user_input
-    if user_symbol == "x" || user_symbol == "o"
-      puts "Great! Let's get started"
+    puts "Please choose the number of players (1 or 2)"
+    num_players = get_user_input
+    if num_players == "1" 
+      puts "Single player mode selected."
+      puts "You will play vs the computer!"
+      puts ""
+      action = "exit"
+    elsif num_players == "2"
+      puts "Two player mode selected."
+      puts "You will play against each other."
       puts ""
       action = "exit"
     else
       puts "invalid input, try again"
     end
   end
-  user_symbol
+  num_players
 end
 
-def choose_computer_symbol(user_symbol)
-  if user_symbol == "o"
-    computer_symbol = "x"
+def choose_second_symbol(first_symbol)
+  if first_symbol == "o"
+    second_symbol = "x"
   else
-    computer_symbol = "o"
+    second_symbol = "o"
   end
-  computer_symbol
+  second_symbol
 end
 
 def get_empty_spaces(board)
   board.keys.select { |key| board[key] == "_"}
+end
+
+def choose_p1_symbol(p1_name)
+  action = ""
+  until action == "exit"
+    puts "Hi #{p1_name}, what symbol do you want to use? Please type 'x' or 'o'"
+    p1_symbol = get_user_input
+    if p1_symbol == "x" || p1_symbol == "o"
+      puts "OK, #{p1_name} with play with the '#{p1_symbol}' symbol"
+      puts ""
+      action = "exit"
+    else
+      puts "invalid input, try again"
+    end
+  end
+  p1_symbol
 end
 
 def computer_turn(board,computer_sym,user_sym,winning_keys)
@@ -100,9 +122,9 @@ def computer_turn(board,computer_sym,user_sym,winning_keys)
   end
 end
 
-def play_game(board, user_sym)
+def one_player_game(board, user_sym)
   winning_keys = [[:a1,:a2,:a3],[:b1,:b2,:b3],[:c1,:c2,:c3],[:a1,:b1,:c1],[:a2,:b2,:c2],[:a3,:b3,:c3],[:a1,:b2,:c3],[:c1,:b2,:a3]]
-  computer_sym = choose_computer_symbol(user_sym)
+  computer_sym = choose_second_symbol(user_sym)
   winning_values = winning_keys.collect { |ary| ary.collect { |item| board[item] } }
   until winning_values.any? { |array| array.all? { |item| item == user_sym } } || winning_values.any? { |array| array.all? { |item| item == computer_sym } } || winning_values.all? { |array| array.include?(user_sym) && array.include?(computer_sym) }
     puts "Here's what the board looks like:"
@@ -132,13 +154,62 @@ def play_game(board, user_sym)
   end
 end
 
+def player_turn(board,user_name,user_sym)
+  puts "#{user_name}, where do you want to place a mark? (type 'h' for instructions)"
+  input = get_user_input
+  empty_spaces = get_empty_spaces(board)
+  if input == "h"
+    instructions
+  elsif empty_spaces.include?(input.to_sym)
+    board[input.to_sym] = user_sym
+  else 
+    puts "invalid input, try again"
+  end
+end
+
+def two_player_game(board,p1_name,p1_sym,p2_name,p2_sym)
+  winning_keys = [[:a1,:a2,:a3],[:b1,:b2,:b3],[:c1,:c2,:c3],[:a1,:b1,:c1],[:a2,:b2,:c2],[:a3,:b3,:c3],[:a1,:b2,:c3],[:c1,:b2,:a3]]
+  winning_values = winning_keys.collect { |ary| ary.collect { |item| board[item] } }
+  until winning_values.any? { |array| array.all? { |item| item == p1_sym } } || winning_values.any? { |array| array.all? { |item| item == p2_sym } } || winning_values.all? { |array| array.include?(p1_sym) && array.include?(p2_sym) }
+    puts "Here's what the board looks like:"
+    show_board(board)
+    player_turn(board,p1_name,p1_sym)
+    show_board(board)
+    player_turn(board,p2_name,p2_sym)
+    winning_values = winning_keys.collect { |ary| ary.collect { |item| board[item] } }
+  end
+  if winning_values.any? { |array| array.all? { |item| item == p1_sym } }
+    show_board(board)
+    puts "#{p1_name.upcase} WINS!!! ٩(^ᴗ^)۶"
+  elsif winning_values.any? { |array| array.all? { |item| item == p2_sym } }
+    show_board(board)
+    puts "#{p2_name.upcase} WINS!!! ٩(^ᴗ^)۶"
+  elsif winning_values.all? { |array| array.include?(p1_sym) && array.include?(p2_sym) }
+    show_board(board)
+    puts "It's a draw! No more possible winning moves :("
+  end
+end
+
 def run_game
   puts "Welcome to Tic Tac Toe, Yo!"
   puts ""
   board = setup_board
   instructions
-  user_sym = choose_user_symbol
-  play_game(board, user_sym)
+  num_players = choose_num_players
+  if num_players == "1"
+    user_sym = choose_user_symbol
+    one_player_game(board, user_sym)
+  else
+    puts "Player 1: Please enter your name"
+    p1_name = gets.chomp.strip
+    p1_sym = choose_p1_symbol(p1_name)
+    puts "Player 2: Please enter your name"
+    p2_name = gets.chomp.strip
+    p2_sym = choose_second_symbol(p1_sym)
+    puts "Hi #{p2_name}, you will play with the '#{p2_sym}' symbol"
+    puts "Let's get started!"
+    two_player_game(board,p1_name,p1_sym,p2_name,p2_sym)
+  end
 end
 
 run_game
