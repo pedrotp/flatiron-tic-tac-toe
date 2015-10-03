@@ -26,6 +26,10 @@ def get_user_input
   gets.chomp.downcase.gsub(/\s/,"")
 end
 
+def get_name
+  gets.chomp.strip.capitalize
+end
+
 def choose_user_symbol
   action = ""
   until action == "exit"
@@ -129,7 +133,7 @@ def one_player_game(board, user_sym)
   until winning_values.any? { |array| array.all? { |item| item == user_sym } } || winning_values.any? { |array| array.all? { |item| item == computer_sym } } || winning_values.all? { |array| array.include?(user_sym) && array.include?(computer_sym) }
     puts "Here's what the board looks like:"
     show_board(board)
-    puts "Where do you want to place a mark? (type 'h' for instructions)"
+    puts "Where do you want to place a mark? You are the '#{user_sym}' symbol (type 'h' for instructions)"
     input = get_user_input
     empty_spaces = get_empty_spaces(board)
     if input == "h"
@@ -157,7 +161,7 @@ end
 def player_turn(board,user_name,user_sym)
   action = ""
   until action == "exit" 
-    puts "#{user_name}, where do you want to place a mark? (type 'h' for instructions)"
+    puts "#{user_name}, where do you want to place a mark? You are the '#{user_sym}' symbol (type 'h' for instructions)"
     input = get_user_input
     empty_spaces = get_empty_spaces(board)
     if input == "h"
@@ -205,10 +209,10 @@ def run_game
     one_player_game(board, user_sym)
   else
     puts "Player 1: Please enter your name"
-    p1_name = gets.chomp.strip
+    p1_name = get_name   
     p1_sym = choose_p1_symbol(p1_name)
     puts "Player 2: Please enter your name"
-    p2_name = gets.chomp.strip
+    p2_name = get_name
     p2_sym = choose_second_symbol(p1_sym)
     puts "Hi #{p2_name}, you will play with the '#{p2_sym}' symbol"
     puts "Let's get started!"
